@@ -6,6 +6,6 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY build/libs/DeliveryService.jar /app/app.jar
+COPY build/libs/CatalogService.jar /app/app.jar
 
-CMD [ "java" ,"-jar" ,"app.jar" ]
+CMD [ "java" ,"-jar" , "app.jar" ]
