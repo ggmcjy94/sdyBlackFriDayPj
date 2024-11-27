@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.6'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'com.google.protobuf' version '0.9.4'
+	id 'jacoco'
 }
 
 group = 'com.example'
@@ -25,8 +27,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'com.google.protobuf:protobuf-java:3.25.5'
+
+	testRuntimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+//	testImplementation 'org.springframework.kafka:spring-kafka-test'
+//	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
@@ -37,4 +46,39 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	finalizedBy jacocoTestReport
+}
+
+
+protobuf {
+	protoc {
+		artifact = 'com.google.protobuf:protoc:3.6.1'
+	}
+}
+
+jacocoTestReport {
+	dependsOn test
+	finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			element = 'BUNDLE'
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.89
+			}
+
+			includes = [
+			        'com.example.OrderService.service.**'
+			]
+
+		}
+
+
+	}
 }
